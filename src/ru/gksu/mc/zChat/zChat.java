@@ -80,9 +80,7 @@ public final class zChat extends JavaPlugin {
         return format.replace("%prefix", this.getPlayerPrefix(player))
                 .replace("%suffix", this.getPlayerSuffix(player))
                 .replace("%world", worldName)
-                .replace("%player", player.getName())
-                .replace("%displayname", player.getDisplayName())
-                .replace("%group", chat.getPrimaryGroup(player));
+                .replace("%player", player.getName());
     }
     
     private String getPlayerPrefix(Player player){

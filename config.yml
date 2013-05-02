@@ -1,5 +1,5 @@
 formats: 
-    message-format: '%prefix %player: &f%message'
+    message-format: '[%world] %prefix %player: &f%message'
     local-message-format: '[LOCAL] %prefix %player: &f%message'
 toggles:
     ranged-mode: false
