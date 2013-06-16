@@ -1,9 +1,9 @@
 name: zChat
 main: ru.gksu.mc.zChat.zChat
 depend: [ Vault ]
-version: 0.1
+version: 0.2
 author: alexanto
-website: mc.gksu.ru
+website: minecraft.gksu.ru
 description: Chat management plugin for zPermissions
 permissions:
   zchat.spy:

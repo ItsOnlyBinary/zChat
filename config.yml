@@ -1,7 +1,9 @@
-formats: 
+# Available placeholders: %prefix, %suffix, %world, %displayname, %player, %faction
+formats:
     message-format: '[%world] %prefix %player: &f%message'
     local-message-format: '[LOCAL] %prefix %player: &f%message'
 toggles:
     ranged-mode: false
+    factions-support: false
 other:
     chat-range: 100.0

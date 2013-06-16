@@ -1,5 +1,8 @@
 package ru.gksu.mc.zChat;
 
+import com.massivecraft.factions.FPlayer;
+import com.massivecraft.factions.FPlayers;
+import com.massivecraft.factions.Faction;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.entity.Player;
@@ -78,6 +81,9 @@ public final class zChat extends JavaPlugin {
     //
     public String replacePlayerPlaceholders(Player player, String format) {
         String worldName = player.getWorld().getName();
+        if(config.getBoolean("toggles.factions-support")){
+            format = format.replace("%faction", this.getPlayerFaction(player));
+        }
         return format.replace("%prefix", this.getPlayerPrefix(player))
                 .replace("%suffix", this.getPlayerSuffix(player))
                 .replace("%world", worldName)
@@ -87,7 +93,7 @@ public final class zChat extends JavaPlugin {
     
     private String getPlayerPrefix(Player player){
     	String prefix = chat.getPlayerPrefix(player);
-    	if(prefix == null){
+    	if(prefix == null || prefix.equals("")){
     		String group = permission.getPrimaryGroup(player);
     		prefix = chat.getGroupPrefix(player.getWorld().getName(),group);
     		if(prefix == null){
@@ -99,7 +105,7 @@ public final class zChat extends JavaPlugin {
     
     private String getPlayerSuffix(Player player){
     	String suffix = chat.getPlayerPrefix(player);
-    	if(suffix == null){
+    	if(suffix == null || suffix.equals("")){
     		String group = permission.getPrimaryGroup(player);
     		suffix = chat.getGroupPrefix(player.getWorld().getName(),group);
     		if(suffix == null){
@@ -107,6 +113,18 @@ public final class zChat extends JavaPlugin {
     		}
     	}
     	return suffix;
+    }
+
+    private String getPlayerFaction(Player player){
+        String tag = "";
+        try{
+            FPlayer fp = FPlayers.i.get(player); //import com.massivecraft.factions.FPlayer/FPlayers to get a FPlayer (base object for most factions functions) from a bukkit player
+            Faction faction =  fp.getFaction(); //to get the faction of a fplayer
+            tag = faction.getTag();
+        }catch (Exception e){
+            System.out.println("Factions plugin not found");
+        }
+        return tag;
     }
 
     public String colorize(String string) {
