@@ -17,8 +17,8 @@ import org.bukkit.Location;
 public final class zChat extends JavaPlugin {
     public static Chat chat = null;
     public static Permission permission = null;
-    private zChatListener listener;
     public YamlConfiguration config;
+    private zChatListener listener;
 
     public void onEnable() {
         //setup the config
@@ -63,6 +63,7 @@ public final class zChat extends JavaPlugin {
 
         return (chat != null);
     }
+
     private boolean setupPermission(){
     	RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
@@ -80,6 +81,7 @@ public final class zChat extends JavaPlugin {
         return format.replace("%prefix", this.getPlayerPrefix(player))
                 .replace("%suffix", this.getPlayerSuffix(player))
                 .replace("%world", worldName)
+                .replace("%displayname", player.getDisplayName())
                 .replace("%player", player.getName());
     }
     
@@ -114,7 +116,7 @@ public final class zChat extends JavaPlugin {
         return string.replaceAll("&([a-z0-9])", "\u00A7$1");
     }
 
-    public List<Player> getLocalRecipients(Player sender, String message, double range) {
+    public List<Player> getLocalRecipients(Player sender, double range) {
         Location playerLocation = sender.getLocation();
         List<Player> recipients = new LinkedList<Player>();
         double squaredDistance = Math.pow(range, 2);

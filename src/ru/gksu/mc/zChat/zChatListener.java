@@ -1,6 +1,5 @@
 package ru.gksu.mc.zChat;
 
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -14,7 +13,6 @@ public class zChatListener implements Listener {
     public Boolean RANGED_MODE = false;
     public double CHAT_RANGE = 100d;
     private final zChat plugin;
-    YamlConfiguration config;
 
     public zChatListener(zChat aThis) {
         this.plugin = aThis;
@@ -42,7 +40,7 @@ public class zChatListener implements Listener {
                 message = LOCAL_MESSAGE_FORMAT;
                 double range = CHAT_RANGE;
                 event.getRecipients().clear();
-                event.getRecipients().addAll(plugin.getLocalRecipients(player, message, range));
+                event.getRecipients().addAll(plugin.getLocalRecipients(player, range));
                 event.getRecipients().addAll(plugin.getSpies());
         	}else{
         		chatMessage = chatMessage.replaceFirst("!","");
