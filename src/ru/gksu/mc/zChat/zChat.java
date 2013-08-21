@@ -107,7 +107,7 @@ public final class zChat extends JavaPlugin {
     	String suffix = chat.getPlayerPrefix(player);
     	if(suffix == null || suffix.equals("")){
     		String group = permission.getPrimaryGroup(player);
-    		suffix = chat.getGroupPrefix(player.getWorld().getName(),group);
+    		suffix = chat.getGroupSuffix(player.getWorld().getName(),group);
     		if(suffix == null){
     			suffix = "";
     		}
