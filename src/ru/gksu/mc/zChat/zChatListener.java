@@ -92,7 +92,9 @@ public class zChatListener implements Listener {
 
         message = message.replace("%message", chatMessage);
 
-        event.setFormat(message);
+        for (Player recipent : event.getRecipients()) {
+            recipent.sendMessage(message);
+        }
         event.setMessage(chatMessage);
 
     }
