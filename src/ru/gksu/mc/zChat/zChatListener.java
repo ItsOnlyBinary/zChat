@@ -22,7 +22,7 @@ public class zChatListener implements Listener {
         this.CHAT_RANGE = plugin.config.getDouble("other.chat-range", this.CHAT_RANGE);
     }
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) {
             return;
@@ -32,6 +32,10 @@ public class zChatListener implements Listener {
 
         String message = MESSAGE_FORMAT;
         String chatMessage = event.getMessage();
+
+        if (chatMessage == null) {
+            return;
+        }
 
         boolean localChat = RANGED_MODE;
 
@@ -92,9 +96,10 @@ public class zChatListener implements Listener {
 
         message = message.replace("%message", chatMessage);
 
-        for (Player recipent : event.getRecipients()) {
-            recipent.sendMessage(message);
-        }
+        //for (Player recipent : event.getRecipients()) {
+        //    recipent.sendMessage(message);
+        //}
+        event.setFormat(message);
         event.setMessage(chatMessage);
 
     }

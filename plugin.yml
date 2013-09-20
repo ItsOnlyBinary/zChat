@@ -1,7 +1,7 @@
 name: zChat
 main: ru.gksu.mc.zChat.zChat
 depend: [ Vault ]
-version: 0.3
+version: 0.3.1
 author: alexanto
 website: minecraft.gksu.ru
 description: Chat management plugin for zPermissions
