@@ -32,6 +32,7 @@ public class zChatListener implements Listener {
 
         String message = MESSAGE_FORMAT;
         String chatMessage = event.getMessage();
+        chatMessage = chatMessage.replace("%", "%%");
 
         if (chatMessage == null) {
             return;
