@@ -1,58 +1,36 @@
 package ru.gksu.mc.zChat;
 
-import com.massivecraft.factions.FPlayer;
-import com.massivecraft.factions.FPlayers;
-import com.massivecraft.factions.Faction;
+import com.massivecraft.factions.entity.Faction;
+import com.massivecraft.factions.entity.UPlayer;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
+import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.configuration.file.YamlConfiguration;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.bukkit.Location;
 
 public final class zChat extends JavaPlugin {
     public static Chat chat = null;
     public static Permission permission = null;
-    public YamlConfiguration config;
-    private zChatListener listener;
+    public FileConfiguration config;
 
     public void onEnable() {
         //setup the config
-        setupConfig();
+        saveDefaultConfig();
+        config = getConfig();
 
-        //Chatlistener - can you hear me?
-        this.listener = new zChatListener(this);
-        this.getServer().getPluginManager().registerEvents(listener, this);
+        //Chat listener - can you hear me?
+        this.getServer().getPluginManager().registerEvents(new zChatListener(this), this);
 
         //Vault chat hooks
         setupChat();
-        
+
         //Vault permission hooks (for primary group search)
         setupPermission();
-
-
-        System.out.println("[zChat] Enabled!");
-    }
-
-    private void setupConfig() {
-        File configFile = new File(this.getDataFolder() + File.separator + "config.yml");
-        try {
-            if (!configFile.exists()) {
-                this.saveDefaultConfig();
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(zChat.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        config = new YamlConfiguration();
-        config = YamlConfiguration.loadConfiguration(configFile);
-
     }
 
     /*
@@ -67,21 +45,20 @@ public final class zChat extends JavaPlugin {
         return (chat != null);
     }
 
-    private boolean setupPermission(){
-    	RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+    private boolean setupPermission() {
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
-
         return (permission != null);
     }
 
-    //
-    //  Begin methods from Functions.java
-    //
+    /*
+     *  Begin methods from Functions.java
+     */
     public String replacePlayerPlaceholders(Player player, String format) {
         String worldName = player.getWorld().getName();
-        if(config.getBoolean("toggles.factions-support")){
+        if (config.getBoolean("toggles.factions-support")) {
             format = format.replace("%faction", this.getPlayerFaction(player));
         }
         return format.replace("%prefix", this.getPlayerPrefix(player))
@@ -90,48 +67,41 @@ public final class zChat extends JavaPlugin {
                 .replace("%displayname", player.getDisplayName())
                 .replace("%player", player.getName());
     }
-    
-    private String getPlayerPrefix(Player player){
-    	String prefix = chat.getPlayerPrefix(player);
-    	if(prefix == null || prefix.equals("")){
-    		String group = permission.getPrimaryGroup(player);
-    		prefix = chat.getGroupPrefix(player.getWorld().getName(),group);
-    		if(prefix == null){
-    			prefix = "";
-    		}
-    	}
-    	return prefix;
-    }
-    
-    private String getPlayerSuffix(Player player){
-    	String suffix = chat.getPlayerSuffix(player);
-    	if(suffix == null || suffix.equals("")){
-    		String group = permission.getPrimaryGroup(player);
-    		suffix = chat.getGroupSuffix(player.getWorld().getName(),group);
-    		if(suffix == null){
-    			suffix = "";
-    		}
-    	}
-    	return suffix;
+
+    private String getPlayerPrefix(Player player) {
+        String prefix = chat.getPlayerPrefix(player);
+        if (prefix == null || prefix.equals("")) {
+            String group = permission.getPrimaryGroup(player);
+            prefix = chat.getGroupPrefix(player.getWorld().getName(), group);
+            if (prefix == null) {
+                prefix = "";
+            }
+        }
+        return prefix;
     }
 
-    private String getPlayerFaction(Player player){
+    private String getPlayerSuffix(Player player) {
+        String suffix = chat.getPlayerSuffix(player);
+        if (suffix == null || suffix.equals("")) {
+            String group = permission.getPrimaryGroup(player);
+            suffix = chat.getGroupSuffix(player.getWorld().getName(), group);
+            if (suffix == null) {
+                suffix = "";
+            }
+        }
+        return suffix;
+    }
+
+    private String getPlayerFaction(Player player) {
         String tag = "";
-        try{
-            FPlayer fp = FPlayers.i.get(player); //import com.massivecraft.factions.FPlayer/FPlayers to get a FPlayer (base object for most factions functions) from a bukkit player
-            Faction faction =  fp.getFaction(); //to get the faction of a fplayer
-            tag = faction.getTag();
-        }catch (Exception e){
+        try {
+            UPlayer fp = UPlayer.get(player);
+            Faction faction = fp.getFaction();
+            tag = faction.getName();
+        } catch (Exception e) {
             System.out.println("Factions plugin not found");
         }
         return tag;
-    }
-
-    public String colorize(String string) {
-        if (string == null) {
-            return "";
-        }
-        return string.replaceAll("&([a-z0-9])", "\u00A7$1");
     }
 
     public List<Player> getLocalRecipients(Player sender, double range) {
@@ -139,7 +109,7 @@ public final class zChat extends JavaPlugin {
         List<Player> recipients = new LinkedList<Player>();
         double squaredDistance = Math.pow(range, 2);
         for (Player recipient : getServer().getOnlinePlayers()) {
-            // Recipient are not from same world
+            // Recipients are not from same world
             if (!recipient.getWorld().equals(sender.getWorld())) {
                 continue;
             }
