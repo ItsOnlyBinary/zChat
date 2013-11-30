@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>ru.gksu.mc</groupId>
 	<artifactId>zChat</artifactId>
-	<version>0.3.1</version>
+	<version>0.3.2</version>
 	<name>zChat</name>
 	<repositories>
 		<repository>
