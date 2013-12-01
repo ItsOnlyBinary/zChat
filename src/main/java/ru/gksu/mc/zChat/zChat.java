@@ -1,133 +1,57 @@
 package ru.gksu.mc.zChat;
 
-import com.massivecraft.factions.entity.Faction;
-import com.massivecraft.factions.entity.UPlayer;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
-import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public final class zChat extends JavaPlugin {
-    public static Chat chat = null;
-    public static Permission permission = null;
-    public FileConfiguration config;
+    private static Chat chat = null;
+    private static Permission permission = null;
+    private static Plugin plugin;
+    private static boolean factionsSupported = false;
 
     public void onEnable() {
-        //setup the config
         saveDefaultConfig();
-        config = getConfig();
-
-        //Chat listener - can you hear me?
-        this.getServer().getPluginManager().registerEvents(new zChatListener(this), this);
-
-        //Vault chat hooks
+        getServer().getPluginManager().registerEvents(new zChatListener(), this);
         setupChat();
-
-        //Vault permission hooks (for primary group search)
         setupPermission();
+        checkFactions();
+        plugin = this;
+        getCommand("zchat").setExecutor(new zChatCommand());
     }
 
-    /*
-     * Code to setup the Chat variable in Vault. Allows me to hook to all the prefix plugins.
-     */
-    private boolean setupChat() {
+    private void setupChat() {
         RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.chat.Chat.class);
-        if (chatProvider != null) {
-            chat = chatProvider.getProvider();
-        }
-
-        return (chat != null);
+        if (chatProvider != null) chat = chatProvider.getProvider();
     }
 
-    private boolean setupPermission() {
+    private void setupPermission() {
         RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
-        if (permissionProvider != null) {
-            permission = permissionProvider.getProvider();
-        }
-        return (permission != null);
+        if (permissionProvider != null) permission = permissionProvider.getProvider();
     }
 
-    /*
-     *  Begin methods from Functions.java
-     */
-    public String replacePlayerPlaceholders(Player player, String format) {
-        String worldName = player.getWorld().getName();
-        if (config.getBoolean("toggles.factions-support")) {
-            format = format.replace("%faction", this.getPlayerFaction(player));
+    private void checkFactions() {
+        if (getConfig().getBoolean("toggles.factions-support")) {
+            if (getServer().getPluginManager().getPlugin("Factions") != null) factionsSupported = true;
+            else getLogger().warning("Factions plugin not found, disabling Factions support.");
         }
-        return format.replace("%prefix", this.getPlayerPrefix(player))
-                .replace("%suffix", this.getPlayerSuffix(player))
-                .replace("%world", worldName)
-                .replace("%displayname", player.getDisplayName())
-                .replace("%player", player.getName());
     }
 
-    private String getPlayerPrefix(Player player) {
-        String prefix = chat.getPlayerPrefix(player);
-        if (prefix == null || prefix.equals("")) {
-            String group = permission.getPrimaryGroup(player);
-            prefix = chat.getGroupPrefix(player.getWorld().getName(), group);
-            if (prefix == null) {
-                prefix = "";
-            }
-        }
-        return prefix;
+    public static Chat getChat() {
+        return chat;
     }
 
-    private String getPlayerSuffix(Player player) {
-        String suffix = chat.getPlayerSuffix(player);
-        if (suffix == null || suffix.equals("")) {
-            String group = permission.getPrimaryGroup(player);
-            suffix = chat.getGroupSuffix(player.getWorld().getName(), group);
-            if (suffix == null) {
-                suffix = "";
-            }
-        }
-        return suffix;
+    public static Permission getPermission() {
+        return permission;
     }
 
-    private String getPlayerFaction(Player player) {
-        String tag = "";
-        try {
-            UPlayer fp = UPlayer.get(player);
-            Faction faction = fp.getFaction();
-            tag = faction.getName();
-        } catch (Exception e) {
-            System.out.println("Factions plugin not found");
-        }
-        return tag;
+    public static Plugin getPlugin() {
+        return plugin;
     }
 
-    public List<Player> getLocalRecipients(Player sender, double range) {
-        Location playerLocation = sender.getLocation();
-        List<Player> recipients = new LinkedList<Player>();
-        double squaredDistance = Math.pow(range, 2);
-        for (Player recipient : getServer().getOnlinePlayers()) {
-            // Recipients are not from same world
-            if (!recipient.getWorld().equals(sender.getWorld())) {
-                continue;
-            }
-            if (playerLocation.distanceSquared(recipient.getLocation()) > squaredDistance) {
-                continue;
-            }
-            recipients.add(recipient);
-        }
-        return recipients;
-    }
-
-    public List<Player> getSpies() {
-        List<Player> recipients = new LinkedList<Player>();
-        for (Player recipient : this.getServer().getOnlinePlayers()) {
-            if (recipient.hasPermission("zchat.spy")) {
-                recipients.add(recipient);
-            }
-        }
-        return recipients;
+    public static boolean isFactionsSupported() {
+        return factionsSupported;
     }
 }

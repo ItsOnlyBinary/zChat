@@ -1,14 +1,22 @@
 name: zChat
 main: ru.gksu.mc.zChat.zChat
-depend: [ Vault ]
+depend: [Vault]
 version: 0.3.2
 author: alexanto
 website: minecraft.gksu.ru
-description: Chat management plugin for zPermissions
+description: Chat management plugin for permissions plugins supporting Vault
+commands:
+  zchat:
+    description: Reloads the zChat configuration
+    permission: zchat.reload
+    usage: /zchat reload
 permissions:
+  zchat.reload:
+    description: Allows you to listen the all local chat messages
+    default: op
   zchat.spy:
-    description: Allow to listen the all local chat messages
+    description: Allows you to listen the all local chat messages
     default: op
   zchat.color:
-    description: Allow to use color codes in the messages
+    description: Allows you to use color codes in the messages
     default: op
