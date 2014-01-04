@@ -1,6 +1,7 @@
 name: zChat
 main: ru.gksu.mc.zChat.zChat
 depend: [Vault]
+softdepend: [Factions]
 version: 0.3.2
 author: alexanto
 website: minecraft.gksu.ru
@@ -12,7 +13,7 @@ commands:
     usage: /zchat reload
 permissions:
   zchat.reload:
-    description: Allows you to listen the all local chat messages
+    description: Allows you to reload the zChat configuration
     default: op
   zchat.spy:
     description: Allows you to listen the all local chat messages
