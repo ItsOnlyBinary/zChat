@@ -10,14 +10,13 @@ public final class zChat extends JavaPlugin {
     private static Chat chat = null;
     private static Permission permission = null;
     private static Plugin plugin;
-    private static boolean factionsSupported = false;
 
+    @Override
     public void onEnable() {
         saveDefaultConfig();
         getServer().getPluginManager().registerEvents(new zChatListener(), this);
         setupChat();
         setupPermission();
-        checkFactions();
         plugin = this;
         getCommand("zchat").setExecutor(new zChatCommand());
     }
@@ -32,13 +31,6 @@ public final class zChat extends JavaPlugin {
         if (permissionProvider != null) permission = permissionProvider.getProvider();
     }
 
-    private void checkFactions() {
-        if (getConfig().getBoolean("toggles.factions-support")) {
-            if (getServer().getPluginManager().getPlugin("Factions") != null) factionsSupported = true;
-            else getLogger().warning("Factions plugin not found, disabling Factions support.");
-        }
-    }
-
     public static Chat getChat() {
         return chat;
     }
@@ -49,9 +41,5 @@ public final class zChat extends JavaPlugin {
 
     public static Plugin getPlugin() {
         return plugin;
-    }
-
-    public static boolean isFactionsSupported() {
-        return factionsSupported;
     }
 }

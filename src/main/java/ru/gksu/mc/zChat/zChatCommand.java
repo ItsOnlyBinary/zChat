@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
 public class zChatCommand implements CommandExecutor {
+    @Override
     public boolean onCommand(CommandSender sender, Command command, String lbl, String[] args) {
         if (args.length < 1) return false;
         if (args[0].equals("reload")) {

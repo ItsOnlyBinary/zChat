@@ -1,9 +1,10 @@
 # Available placeholders: %prefix, %suffix, %world, %displayname, %player, %faction
 formats:
     message-format: '[%world] %prefix %player: &f%message'
+    # Factions Example, "chatSetFormat": false AND "chatParseTagsAt": "LOW",
+    # message-format: '[%world] %prefix <{factions_relcolor}Â§l{factions_roleprefix}Â§r{factions_relcolor}{factions_name}Â§f> %player: &f%message'
     local-message-format: '[LOCAL] %prefix %player: &f%message'
 toggles:
     ranged-mode: false
-    factions-support: false
 other:
     chat-range: 100.0

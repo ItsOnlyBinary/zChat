@@ -1,6 +1,5 @@
 package ru.gksu.mc.zChat;
 
-import com.massivecraft.factions.entity.UPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -10,9 +9,7 @@ import java.util.List;
 public class Utils {
     public static String replacePlayerPlaceholders(Player player, String format) {
         String worldName = player.getWorld().getName();
-        if (zChat.isFactionsSupported()) {
-            format = format.replace("%faction", getPlayerFaction(player));
-        }
+       
         return format.replace("%prefix", getPlayerPrefix(player))
                 .replace("%suffix", getPlayerSuffix(player))
                 .replace("%world", worldName)
@@ -42,10 +39,6 @@ public class Utils {
             }
         }
         return suffix;
-    }
-
-    private static String getPlayerFaction(Player player) {
-        return UPlayer.get(player).getFactionName();
     }
 
     public static List<Player> getLocalRecipients(Player sender, double range) {
